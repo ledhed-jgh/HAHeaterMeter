@@ -41,7 +41,7 @@ def setup(hass, config):
     """Set up is called when Home Assistant is loading our component."""
     _LOGGER.debug("HeaterMeter init.py: config = %s", config[DOMAIN])
 
-    hass.data[DOMAIN] = {}
+    hass.data[DOMAIN]                           = {}
     hass.data[DOMAIN][CONF_HOST]                = config[DOMAIN][CONF_HOST]
     hass.data[DOMAIN][CONF_PORT]                = config[DOMAIN][CONF_PORT]
     hass.data[DOMAIN][CONF_API_KEY]             = config[DOMAIN][CONF_API_KEY]
