@@ -14,7 +14,7 @@ import requests
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.const import (
-        CONF_HOST, CONF_PORT, CONF_API_KEY, CONF_SCAN_INTERVAL
+        CONF_HOST, CONF_PORT, CONF_API_KEY, CONF_UNIT_SYSTEM, CONF_SCAN_INTERVAL
     )
 
 DOMAIN = 'heatermeter'
@@ -22,8 +22,9 @@ DOMAIN = 'heatermeter'
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
         vol.Required(CONF_HOST): cv.string,
-        vol.Required(CONF_API_KEY): cv.string,
         vol.Optional(CONF_PORT, default=80): cv.positive_int,
+        vol.Required(CONF_API_KEY): cv.string,
+        vol.Optional(CONF_UNIT_SYSTEM): cv.string,
         vol.Optional(CONF_SCAN_INTERVAL, default=10): cv.positive_int
     })
 }, extra=vol.ALLOW_EXTRA)
@@ -41,11 +42,12 @@ def setup(hass, config):
     """Set up is called when Home Assistant is loading our component."""
     _LOGGER.debug("HeaterMeter init.py: config = %s", config[DOMAIN])
 
-    hass.data[DOMAIN]                           = {}
-    hass.data[DOMAIN][CONF_HOST]                = config[DOMAIN][CONF_HOST]
-    hass.data[DOMAIN][CONF_PORT]                = config[DOMAIN][CONF_PORT]
-    hass.data[DOMAIN][CONF_API_KEY]             = config[DOMAIN][CONF_API_KEY]
-    hass.data[DOMAIN][CONF_SCAN_INTERVAL]       = config[DOMAIN][CONF_SCAN_INTERVAL]
+    hass.data[DOMAIN]                       = {}
+    hass.data[DOMAIN][CONF_HOST]            = config[DOMAIN][CONF_HOST]
+    hass.data[DOMAIN][CONF_PORT]            = config[DOMAIN][CONF_PORT]
+    hass.data[DOMAIN][CONF_API_KEY]         = config[DOMAIN][CONF_API_KEY]
+    hass.data[DOMAIN][CONF_UNIT_SYSTEM]     = config[DOMAIN][CONF_UNIT_SYSTEM]
+    hass.data[DOMAIN][CONF_SCAN_INTERVAL]   = config[DOMAIN][CONF_SCAN_INTERVAL]
 
     _LOGGER.debug("HeaterMeter init.py: hass.data = %s", hass.data[DOMAIN])
 

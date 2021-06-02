@@ -13,7 +13,7 @@ from homeassistant.helpers.config_validation import (  # noqa
     PLATFORM_SCHEMA, PLATFORM_SCHEMA_BASE)
 import homeassistant.helpers.config_validation as cv
 from homeassistant.const import (
-        CONF_HOST, CONF_PORT, CONF_API_KEY, CONF_SCAN_INTERVAL, 
+        CONF_HOST, CONF_PORT, CONF_API_KEY, CONF_UNIT_SYSTEM, CONF_SCAN_INTERVAL, 
         CONF_RESOURCES, TEMP_CELSIUS, TEMP_FAHRENHEIT
     )
 from homeassistant.util import Throttle
@@ -57,9 +57,20 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
        
     host = hass.data[DOMAIN][CONF_HOST]
     port = hass.data[DOMAIN][CONF_PORT]
-    units = hass.config.units.name
 
+    # Default units to Celsius
     TEMP_UNITS = TEMP_CELSIUS
+
+    # Unspecified Units default to HA system units
+    if not hass.data[DOMAIN][CONF_UNIT_SYSTEM]:
+        units = hass.config.units.name
+    elif hass.data[DOMAIN][CONF_UNIT_SYSTEM].lower() == "auto":
+        units = hass.config.units.name
+    else:
+        units = hass.data[DOMAIN][CONF_UNIT_SYSTEM]
+
+    if units.lower() == "metric":
+        TEMP_UNITS = TEMP_CELSIUS
 
     if units.lower() == "imperial":
         TEMP_UNITS = TEMP_FAHRENHEIT
