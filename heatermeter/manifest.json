@@ -5,6 +5,7 @@
   "dependencies": [],
   "codeowners": [],
   "requirements": [],
+  "version": "2021.03.06",
   "zeroconf": [
     {"type":"_http._tcp.local.","name":"HeaterMeter BBQ Controller*"}
    ]
