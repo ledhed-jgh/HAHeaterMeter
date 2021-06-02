@@ -1,0 +1,12 @@
+{
+  "domain": "heatermeter",
+  "name": "HeaterMeter BBQ Controller",
+  "documentation": "https://github.com/ledhed-jgh/HAHeaterMeter",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": [],
+  "version": "2021.03.06",
+  "zeroconf": [
+    {"type":"_http._tcp.local.","name":"HeaterMeter BBQ Controller*"}
+   ]
+}
