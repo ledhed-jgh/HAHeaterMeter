@@ -12,25 +12,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - CHANGELOG.md file to hopefully serve as an evolving example of a standardized open source project CHANGELOG.
+
 - BREAKING_CHANGES.md to make README.md more concise. 
+
 - Added a Config_Flow so the integration is now setup through the HA UI, no more YAML.
+
 - Setpoint and Alarms are now synchronized with the HeaterMeter automatically. No need to create a script to call a service to push values. Just enter the value you want for a Setpoint and it gets pushed the HeaterMeter automatically. Conversely, changes made directly on the HeaterMeter (with physical buttons or the WebUI) are automatically pushed back to the Integration.
+
 - All entities created by this integration are now added to a HeaterMeter device. So now you can conveniently access them from the Integrations tab.
+
 - Added a clickable link to the HeaterMeter's WebUI from Device Info.
+
 - Improved logging so changes are reflected in the Device's Activity log.
+
 - Lid binary_sensor now has an attribute called "seconds_remaining".
+
 - Alarm binary_sensor now has two new attributes:
     - alarm_type: displays "High" or "Low"
     - probe_name: displays the Friendly Name of the probe that is alarming.
     - These attributes facilitate creating more complex automations.
+
 - New service 'heatermeter.set_alarm_by_index' to facilitate synchronizing single value changes. Note: service 'heatermeter.set_alarms' still exists for backwards compatibility or in scenarios where you want to push all alarm values at once in a script, automation, or Node-Red flow.
     - Example: you have presets for Pork Butt, Brisket, Chicken, etc...
+
 - Discovery/ZeroConf, so newly discovered HeaterMeters will show up in the Discovered section of the Integrations tab.
+
 - Improved device availability. When the HeaterMeter goes offline, all entities enter the Unavailable state. The byproduct of this is less spam in the logs.
 
 ### Fixed
 
 - Migraged code base to Async logic required by Home Assistant.
+
 - Helpers interface change in HomeAsstiant 2024+ breaks component [#9]
 
 
@@ -41,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Need for Input_Number Helpers used to set Alarm values and Setpoint.
+
 - Dependency on scripts used in the legacy integration for setting and/or retrieving alarm values and setpoint.
 
 
@@ -67,14 +80,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed depreciated constants (TEMP_CELSIUS/TEMP_FAHRENHEIT) to UnitOfTemperature
-  - (legacy constants to be removed in 2025.1)
+    - (legacy constants to be removed in 2025.1)
 - Fixed Issue #1 'Fill Example Data inserts parameter twice', removed parameter from service example.
 
 
 ### Changed
 
 - YAML to include default values for INT and FLOAT values in templates.
-    - See [2021.10 Breaking Changes\Templates](https://www.home-assistant.io/blog/2021/10/06/release-202110/#breaking-changes)
+    - See [2021.10 Breaking Changes\Templates]
 - Lid icon to mdi:room-service because it looks more like a BBQ lid.
 - Input_Number's icon to mdi:target.
 - Default heatermeter.set_temperature to 225.
@@ -91,6 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v0.2.0]: https://github.com/ledhed-jgh/HAHeaterMeter/releases/tag/v0.2.0-beta1
 [v0.1.0]: https://github.com/ledhed-jgh/HAHeaterMeter/releases/tag/v0.1.0
 [#9]: https://github.com/ledhed-jgh/HAHeaterMeter/issues?q=is%3Aissue%20state%3Aclosed
+[2021.10 Breaking Changes\Templates]: https://www.home-assistant.io/blog/2021/10/06/release-202110/#breaking-changes
 
 
 <!-- ### Template
