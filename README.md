@@ -1,11 +1,8 @@
 # HeaterMeter smoker controller component for Home Assistant
 HeaterMeter smoker controller integration for HA.
 
-## BREAKING CHANGES:
- - See: [BREAKING_CHANGES.md](./BREAKING_CHANGES.md)
-
-## CHANGELOG:
- - See: [CHANGELOG.md](./CHANGELOG.md)
+## [BREAKING_CHANGES.md](./BREAKING_CHANGES.md)
+## [CHANGELOG.md](./CHANGELOG.md)
 
 
 ## :heavy_check_mark: ToDo:
