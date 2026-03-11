@@ -1,12 +1,49 @@
-set_temperature:
-  description: Set smoker temperature setpoint.
+set_alarm_by_index:
+  name: Set Alarm by Index
+  description: Sets a specific probe alarm threshold by its index (0-7).
   fields:
-    temperature: 
-      description: 'New setpoint temperature'
-      example: '225'
+    index:
+      name: Alarm Index
+      description: "0: Pit Low, 1: Pit High, 2: Probe1 Low, 3: Probe1 High, etc."
+      example: 1
+      selector:
+        number:
+          min: 0
+          max: 7
+          mode: box
+    value:
+      name: Threshold Value
+      description: The alarm temperature threshold (negative numbers disable the alarm).
+      example: 250
+      selector:
+        number:
+          min: -1000
+          max: 1000
+          unit_of_measurement: "°F"
+          mode: box
+
 set_alarms:
-  description: Set smoker alarms.
+  name: Set All Alarms (Legacy)
+  description: Backwards compatibility service to set all 8 alarms at once using a CSV string.
   fields:
-    alarms: 
-      description: 'New alarm temperatures'
-      example: '-190,-250,-100,-205,-100,-100,-100,-100'
+    alarms:
+      name: Alarm String
+      description: A comma-separated string of 8 alarm values (L0,H0,L1,H1,L2,H2,L3,H3).
+      example: "-190,250,-100,205,-100,100,-100,100"
+      selector:
+        text:
+
+new_setpoint:
+  name: Set Pit Temperature
+  description: Sets the main Pit setpoint temperature.
+  fields:
+    temperature:
+      name: Temperature
+      description: The target temperature for the Pit.
+      example: 225
+      selector:
+        number:
+          min: 0
+          max: 1000
+          unit_of_measurement: "°F"
+          mode: box

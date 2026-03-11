@@ -2,11 +2,14 @@
   "domain": "heatermeter",
   "name": "HeaterMeter BBQ Controller",
   "documentation": "https://github.com/ledhed-jgh/HAHeaterMeter",
-  "dependencies": [],
+  "iot_class": "local_polling",
+  "platforms": ["sensor", "number", "binary_sensor"],
+  "zeroconf": [
+    {"type":"_http._tcp.local.","name":"*heatermeter*"}
+  ],
+  "dependencies": ["zeroconf"],
   "codeowners": [],
   "requirements": [],
-  "version": "2021.03.06",
-  "zeroconf": [
-    {"type":"_http._tcp.local.","name":"HeaterMeter BBQ Controller*"}
-   ]
+  "config_flow": true,
+  "version": "2025.12.0"
 }

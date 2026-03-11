@@ -1,136 +1,161 @@
-"""
-Support for reading HeaterMeter data. See https://github.com/CapnBry/HeaterMeter/wiki/Accessing-Raw-Data-Remotely
-
-configuration.yaml
-
-heatermeter:
-    api_key: api key from HeaterMeter API
-    host: smoker.lan
-    port: 80
-    scan_interval: 2
-"""
 import logging
-import requests
-import homeassistant.helpers.config_validation as cv
+import asyncio
 import voluptuous as vol
+from datetime import timedelta
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.const import (
-        CONF_HOST, CONF_PORT, CONF_API_KEY, CONF_SCAN_INTERVAL
-    )
+    CONF_HOST, 
+    CONF_PORT, 
+    CONF_API_KEY, 
+    CONF_SCAN_INTERVAL,
+    Platform
+)
 
-DOMAIN = 'heatermeter'
-
-CONFIG_SCHEMA = vol.Schema({
-    DOMAIN: vol.Schema({
-        vol.Required(CONF_HOST): cv.string,
-        vol.Required(CONF_API_KEY): cv.string,
-        vol.Optional(CONF_PORT, default=80): cv.positive_int,
-        vol.Optional(CONF_SCAN_INTERVAL, default=10): cv.positive_int
-    })
-}, extra=vol.ALLOW_EXTRA)
-
-
-SET_URL_API = 'http://{0}:{1}/luci/lm/api/config'
-TEMPERATURE_NAME = 'temperature'
-TEMPERATURE_DEFAULT = '225'
-ALARM_NAME = 'alarms'
-ALARM_DEFAULT = '-190,-250,-1,-205,-100,-100,-100,-100'
+DOMAIN = "heatermeter"
+PLATFORMS = [Platform.SENSOR, Platform.NUMBER, Platform.BINARY_SENSOR]
 _LOGGER = logging.getLogger(__name__)
 
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Set up HeaterMeter from a config entry."""
+    conf = entry.data
+    session = async_get_clientsession(hass)
 
-def setup(hass, config):
-    """Set up is called when Home Assistant is loading our component."""
-    _LOGGER.debug("HeaterMeter init.py: config = %s", config[DOMAIN])
+    scan_interval = entry.options.get(CONF_SCAN_INTERVAL, conf.get(CONF_SCAN_INTERVAL, 5))
 
-    hass.data[DOMAIN]                       = {}
-    hass.data[DOMAIN][CONF_HOST]            = config[DOMAIN][CONF_HOST]
-    hass.data[DOMAIN][CONF_PORT]            = config[DOMAIN][CONF_PORT]
-    hass.data[DOMAIN][CONF_API_KEY]         = config[DOMAIN][CONF_API_KEY]
-    hass.data[DOMAIN][CONF_SCAN_INTERVAL]   = config[DOMAIN][CONF_SCAN_INTERVAL]
+    async def async_update_data():
+        """Fetch data from HeaterMeter status JSON."""
+        url = f"http://{conf[CONF_HOST]}:{conf[CONF_PORT]}/luci/lm/hmstatus"
+        async with session.get(url, timeout=5) as response:
+            if response.status != 200:
+                raise Exception(f"Error communicating with HeaterMeter: {response.status}")
+            return await response.json()
 
-    _LOGGER.debug("HeaterMeter init.py: hass.data = %s", hass.data[DOMAIN])
+    coordinator = DataUpdateCoordinator(
+        hass, 
+        _LOGGER, 
+        name="heatermeter_coordinator",
+        update_method=async_update_data,
+        update_interval=timedelta(seconds=scan_interval),
+    )
 
-    ### SetPoint
-    def handle_setpoint(temperature):
-        _LOGGER.debug("HeaterMeter handle_setpoint: temp = %s", temperature)
+    sw_version = "Unknown"
+    v_url = f"http://{conf[CONF_HOST]}:{conf[CONF_PORT]}/luci/lm/api/version"
+    try:
+        async with session.get(v_url, timeout=5) as resp:
+            if resp.status == 200:
+                v_json = await resp.json()
+                sw_version = str(v_json.get("ucid", "Unknown"))
+    except Exception: 
+        _LOGGER.debug("HeaterMeter: Could not fetch version info")
 
-    def handle_setpoint_api(call):
-        """Handle the service call."""
-        _LOGGER.debug("HeaterMeter init.py: calli = %s", call)
- 
-        temp = call.data.get(TEMPERATURE_NAME, TEMPERATURE_DEFAULT)
-        _LOGGER.debug("HeaterMeter init.py: temp = %s", temp)
+    hass.data.setdefault(DOMAIN, {})
+    data_store = {
+        "coordinator": coordinator,
+        "pending_alarms": {},
+        "alarm_timer": None,
+        "sw_version": sw_version
+    }
+    hass.data[DOMAIN][entry.entry_id] = data_store
 
-        #SET_URL_API = 'http://{0}:{1}/luci/lm/api/config'
-        try:
-            data = {'sp':temp, 'apikey':hass.data[DOMAIN][CONF_API_KEY]}
+    await coordinator.async_config_entry_first_refresh()
+
+    async def send_api_command(params):
+        """Unified POST command using Form-Encoded data."""
+        url = f"http://{conf[CONF_HOST]}:{conf[CONF_PORT]}/luci/lm/api/config"
+        payload = {**params, "apikey": conf[CONF_API_KEY]}
         
-            _LOGGER.debug("HeaterMeter handle_setpoint: data = %s", data)
-
-            url = SET_URL_API.format(
-                    hass.data[DOMAIN][CONF_HOST], hass.data[DOMAIN][CONF_PORT]
-            )
-            _LOGGER.debug("HeaterMeter handle_setpoint: ADMIN_URL = %s", url)
-            
-            r = requests.post(url, data = data)
-            if r.status_code == 200:
-                _LOGGER.info("HeaterMeter handle_setpoint Setpoint updated: %s" % (temp))
-                _LOGGER.debug("HeaterMeter handle_setpoint Status: %s" % (r.text))
-                _LOGGER.debug("HeaterMeter handle_setpoint headers: %s" % (r.headers))
-            elif r.status_code == 404:
-                _LOGGER.debug("HeaterMeter handle_setpoint_api wrong API version, reverting to old setpoint api")
-                handle_setpoint(temp)
-            elif r.status_code == 403:
-                _LOGGER.debug("HeaterMeter handle_setpoint_api User has explicitly disabled external API")
-            else:
-                _LOGGER.debug("HeaterMeter handle_setpoint_api unknown http reply %s", temp)
-
-        except requests.exceptions.RequestException as e:  # This is the correct syntax
-            _LOGGER.error("HeaterMeter handle_setpoint Post Connection error %s" % (r.status_code))
-
-    hass.services.register(DOMAIN, 'set_temperature', handle_setpoint_api)
-
-    ### Set Alarms
-    def handle_setalarms(alarms):
-        _LOGGER.debug("HeaterMeter handle_setalarms: alrm = %s", alarms)
-
-    def handle_setalarms_api(call):
-        """Handle the service call."""
-        _LOGGER.debug("HeaterMeter init.py: calli = %s", call)
- 
-        alrm = call.data.get(ALARM_NAME, ALARM_DEFAULT)
-        _LOGGER.debug("HeaterMeter init.py: alarms = %s", alrm)
-
-        #SET_URL_API = 'http://{0}:{1}/luci/lm/api/config'
-        try:
-            data = {'al':alrm, 'apikey':hass.data[DOMAIN][CONF_API_KEY]}
+        _LOGGER.debug("HeaterMeter: Attempting POST to %s with payload: %s", url, params)
         
-            _LOGGER.debug("HeaterMeter handle_setalarms: data = %s", data)
+        try:
+            async with session.post(url, data=payload, timeout=10) as response:
+                response_text = await response.text()
+                if response.status == 200:
+                    _LOGGER.info("HeaterMeter: Command accepted. Response: %s", response_text)
+                    return True
+                _LOGGER.error("HeaterMeter: API Error (Status %s): %s", response.status, response_text)
+                return False
+        except Exception as e:
+            _LOGGER.error("HeaterMeter: Connection error during API call: %s", e)
+            return False
 
-            url = SET_URL_API.format(
-                    hass.data[DOMAIN][CONF_HOST], hass.data[DOMAIN][CONF_PORT]
-            )
-            _LOGGER.debug("HeaterMeter handle_setalarms: ADMIN_URL = %s", url)
+    async def new_setpoint_temperature(call):
+        """Service handler for the main Setpoint (sp)."""
+        _LOGGER.info("HeaterMeter: new_setpoint service called with %s", call.data)
+        
+        temp = call.data.get("temperature")
+        if temp is not None:
+            target_val = str(int(float(temp)))
+            if await send_api_command({"sp": target_val}):
+                await asyncio.sleep(1.5)
+                await coordinator.async_request_refresh()
+
+    async def handle_set_alarms(call):
+        """Backwards compatibility: Sets all 8 alarms at once."""
+        _LOGGER.info("HeaterMeter: handle_set_alarms legacy service called")
+        alarm_csv = call.data.get("alarms")
+        if alarm_csv and await send_api_command({"al": alarm_csv}):
+            await asyncio.sleep(2.0)
+            await coordinator.async_request_refresh()
+
+    async def handle_set_alarm_by_index(call):
+        """Debounced handler for single index updates."""
+        idx, val = call.data.get("index"), call.data.get("value")
+        if idx is None or val is None: return
+
+        data_store["pending_alarms"][idx] = val
+        if data_store["alarm_timer"]:
+            data_store["alarm_timer"].cancel()
+
+        async def debounced_send():
+            await asyncio.sleep(1.5)
+            if not coordinator.data: return
             
-            r = requests.post(url, data = data)
-            if r.status_code == 200:
-                _LOGGER.info("HeaterMeter handle_setalarms Alarms updated: %s" % (alrm))
-                _LOGGER.debug("HeaterMeter handle_setalarms Status: %s" % (r.text))
-                _LOGGER.debug("HeaterMeter handle_setalarms headers: %s" % (r.headers))
-            elif r.status_code == 404:
-                _LOGGER.debug("HeaterMeter handle_setalarms_api wrong API version, reverting to old api")
-                handle_setpoint(alrm)
-            elif r.status_code == 403:
-                _LOGGER.debug("HeaterMeter handle_setalarms_api User has explicitly disabled external API")
-            else:
-                _LOGGER.debug("HeaterMeter handle_setalarms_api unknown http reply %s", alrm)
+            alarms = []
+            for t in coordinator.data.get("temps", []):
+                alarms.append(str(t.get("a", {}).get("l", -1000)))
+                alarms.append(str(t.get("a", {}).get("h", 1000)))
 
-        except requests.exceptions.RequestException as e:  # This is the correct syntax
-            _LOGGER.error("HeaterMeter handle_setalarms Post Connection error %s" % (r.status_code))
+            for p_idx, p_val in data_store["pending_alarms"].items():
+                if p_idx < len(alarms):
+                    alarms[p_idx] = str(p_val)
 
-    hass.services.register(DOMAIN, 'set_alarms', handle_setalarms_api)
+            alarm_csv = ",".join(alarms)
+            if await send_api_command({"al": alarm_csv}):
+                data_store["pending_alarms"].clear()
+                await asyncio.sleep(2.0)
+                await coordinator.async_request_refresh()
+            data_store["alarm_timer"] = None
 
+        data_store["alarm_timer"] = hass.async_create_task(debounced_send())
 
-    hass.helpers.discovery.load_platform('sensor', DOMAIN, {}, config)
+    hass.services.async_register(
+        DOMAIN, "new_setpoint", new_setpoint_temperature,
+        schema=vol.Schema({vol.Required("temperature"): vol.Coerce(int)})
+    )
+    hass.services.async_register(
+        DOMAIN, "set_alarms", handle_set_alarms,
+        schema=vol.Schema({vol.Required("alarms"): str})
+    )
+    hass.services.async_register(
+        DOMAIN, "set_alarm_by_index", handle_set_alarm_by_index,
+        schema=vol.Schema({
+            vol.Required("index"): vol.Coerce(int),
+            vol.Required("value"): vol.Coerce(int)
+        })
+    )
 
-    # Return boolean to indicate that initialization was successfully.
+    entry.async_on_unload(entry.add_update_listener(update_listener))
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
+
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry):
+    await hass.config_entries.async_reload(entry.entry_id)
+
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.entry_id)
+    return unload_ok

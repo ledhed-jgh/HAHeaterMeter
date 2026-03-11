@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "host": "IP Address or Hostname",
+          "port": "Port",
+          "api_key": "API Key",
+          "scan_interval": "Scan Interval"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to HeaterMeter. Check the IP and Port.",
+      "invalid_auth": "Invalid API Key provided.",
+      "unknown": "An unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This HeaterMeter is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "Scan Interval"
+        }
+      }
+    }
+  }
+}
