@@ -2,49 +2,19 @@
 HeaterMeter smoker controller integration for HA.
 
 ## BREAKING CHANGES:
-- The sensor previously reported "-" when an alarm was disabled, and the "update_heatermeter_input_numbers" script
-  would update the alarm values in the UI to "-1". I've changed this behavior, and now the senor values match
-  what is in heatermeter. You will need to update your "update_heatermeter_input_numbers" script accordingly. I've
-  updated the example in the [scripts.yaml](#scriptsyaml) section of this readme. The benefit to this is that
-  those values in heatermeter survive a reboot, so if you always use the same alarm values, you can save them
-  and just toggle them on/off by making the number negative.
-  Example: Probe1 Alarm = 203, to disable the alarm (but retain the value) you can set it to -203.
-  If you prefer the legacy -1 values to represent a disabled alarm, you can find an updated script in: "legacy_update_heatermeter_input_numbers.yaml"
+ - See: [BREAKING_CHANGES.md](./BREAKING_CHANGES.md)
 
-## Changes:
-- Fixed depreciated constants (TEMP_CELSIUS/TEMP_FAHRENHEIT) to UnitOfTemperature
-  - (legacy constants to be removed in 2025.1)
-- Negative Alarm values are sync'd (rather than displaying -1).
-- Updated YAML to include default values for INT and FLOAT values in templates.
-  - See [2021.10 Breaking Changes\Templates](https://www.home-assistant.io/blog/2021/10/06/release-202110/#breaking-changes)
-- Added 'Update HeaterMeter Alarms' automation (Contributed by Chris8837).
-- Removed Refresh button from Alarms card (not needed with the sync alarms automation).
-- Added 'heatermeter.set_alarms' and 'heatermeter.set_temperature' scripts for setting & refreshing alarms.
-- Added 'Alarms' card to ui-lovalace.yaml.
-- Added 'automation.bbq_is_ready' automation to announce when your food is ready.
-- Added High/Low Alarm Sensors for each probe.
-- Added 'set_alarms' service to set probe alarms.
-- Fixed Issue #1 'Fill Example Data inserts parameter twice', removed parameter from service example.
-- Temperature units automatically set based on 'Unit System' setting in 'Configuration\General'.
-- Removed username and password configuration options, use api_key instead.
-- Added an Alarm sensor that changes to 'on' when any probe's Alarm/Ring value is set to a non-null value.
-- Added an Automation example to send push notifications w/ action to mobile app.
-- Changed the 'lid' icon to mdi:room-service because it looks more like a BBQ lid.
-- Changed the Input_Number's icon to mdi:target.
-- Changed the default heatermeter.set_temperature to 225.
-- Modified the script.yaml by removing the trigger. (Set Point will be set manually in the Lovelace card).
-- Lovelace Card Updates:
-  * Now includes a card for setting the Set Point with a slider and 'Set' button.
-  * Added history graph for the fan.
-<br/>
+## CHANGELOG:
+ - See: [CHANGELOG.md](./CHANGELOG.md)
+
 
 ## :heavy_check_mark: ToDo:
 - [X] ~~Stop the integration from spamming the logs when the HeaterMeter is offline. (Thanks spoetnik)~~
-- [ ] Implement scan_interval.
+- [X] Implement scan_interval.
 - [X] Make TEMP_FAHRENHEIT / TEMP_CELSIUS a user configurable option. ~~or read it from the HeaterMeter config.~~
-- [ ] Home Assistant Discovery
+- [X] Home Assistant Discovery
 - [X] Individual probe Hi/Lo alarms.
-- [ ] ~~Create service to enable/disable 'Ramp' mode.~~ (HeaterMeter API doesn't support this)
+- [!] ~~Create service to enable/disable 'Ramp' mode.~~ (HeaterMeter API doesn't support this)
 <br/>
 
 ## :bookmark_tabs: Table of Contents
