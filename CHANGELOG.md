@@ -5,10 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+
+
+## [0.2.0] - 2026-03-10
 
 ### Added
 
+- CHANGELOG.md file to hopefully serve as an evolving example of a standardized open source project CHANGELOG.
+- BREAKING_CHANGES.md to make README.md more concise. 
 - Added a Config_Flow so the integration is now setup through the HA UI, no more YAML.
 - Setpoint and Alarms are now synchronized with the HeaterMeter automatically. No need to create a script to call a service to push values. Just enter the value you want for a Setpoint and it gets pushed the HeaterMeter automatically. Conversely, changes made directly on the HeaterMeter (with physical buttons or the WebUI) are automatically pushed back to the Integration.
 - All entities created by this integration are now added to a HeaterMeter device. So now you can conveniently access them from the Integrations tab.
@@ -24,39 +28,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Discovery/ZeroConf, so newly discovered HeaterMeters will show up in the Discovered section of the Integrations tab.
 - Improved device availability. When the HeaterMeter goes offline, all entities enter the Unavailable state. The byproduct of this is less spam in the logs.
 
+### Fixed
+
+- Migraged code base to Async logic required by Home Assistant.
+- Helpers interface change in HomeAsstiant 2024+ breaks component [#9]
+
 
 ### Changed
 
-- Updated code base to Async logic required by Home Assistant.
 - Migrated Setpoint and Alarm sensors to NumberEntity, removing the need to manually create Input_Number Helpers.
-
 
 ### Removed
 
 - Need for Input_Number Helpers used to set Alarm values and Setpoint.
 - Dependency on scripts used in the legacy integration for setting and/or retrieving alarm values and setpoint.
-
-
-
-## [0.2.0] - 2026-03-10
-
-### Added
-
-- This CHANGELOG file to hopefully serve as an evolving example of a
-  standardized open source project CHANGELOG.
-
-### Fixed
-
-- Improve French translation (#377).
-
-
-### Changed
-
-- Upgrade dependencies: Ruby 3.2.1, Middleman, etc.
-
-### Removed
-
-- Unused normalize.css file.
 
 
 
@@ -101,13 +86,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refresh button from Alarms card (not needed with the sync alarms automation).
 
 
-### Release Reference
+### Links
 [unreleased]: https://github.com/ledhed-jgh/HAHeaterMeter
 [0.2.0]: https://github.com/ledhed-jgh/HAHeaterMeter/releases/tag/v0.2.0-beta1
 [0.1.0]: https://github.com/ledhed-jgh/HAHeaterMeter/releases/tag/v0.1.0
+[#9]: https://github.com/ledhed-jgh/HAHeaterMeter/issues?q=is%3Aissue%20state%3Aclosed
 
 
+<!--
 
+## [Unreleased]
 
+### Added
 
+- 
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+-->
 
