@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-## [0.2.0] - 2026-03-10
+## [v0.2.0] - 2026-03-10
 
 ### Added
 
@@ -20,11 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved logging so changes are reflected in the Device's Activity log.
 - Lid binary_sensor now has an attribute called "seconds_remaining".
 - Alarm binary_sensor now has two new attributes:
- * alarm_type: displays "High" or "Low"
- * probe_name: displays the Friendly Name of the probe that is alarming.
- * These attributes facilitate creating more complex automations.
+    - alarm_type: displays "High" or "Low"
+    - probe_name: displays the Friendly Name of the probe that is alarming.
+    - These attributes facilitate creating more complex automations.
 - New service 'heatermeter.set_alarm_by_index' to facilitate synchronizing single value changes. Note: service 'heatermeter.set_alarms' still exists for backwards compatibility or in scenarios where you want to push all alarm values at once in a script, automation, or Node-Red flow.
- * Example: you have presets for Pork Butt, Brisket, Chicken, etc...
+    - Example: you have presets for Pork Butt, Brisket, Chicken, etc...
 - Discovery/ZeroConf, so newly discovered HeaterMeters will show up in the Discovered section of the Integrations tab.
 - Improved device availability. When the HeaterMeter goes offline, all entities enter the Unavailable state. The byproduct of this is less spam in the logs.
 
@@ -46,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-## [0.1.0] - 2023-03-10
+## [v0.1.0] - 2023-03-10
 
 ### Added
 
@@ -61,20 +61,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Alarm sensor that changes to 'on' when any probe's Alarm/Ring value is set to a non-null value.
 - Automation example to send push notifications w/ action to mobile app.
 - Lovelace Card Updates:
-  * Now includes a card for setting the Set Point with a slider and 'Set' button.
-  * Added history graph for the fan.
+    - Now includes a card for setting the Set Point with a slider and 'Set' button.
+    - Added history graph for the fan.
 
 ### Fixed
 
 - Fixed depreciated constants (TEMP_CELSIUS/TEMP_FAHRENHEIT) to UnitOfTemperature
-  * (legacy constants to be removed in 2025.1)
+  - (legacy constants to be removed in 2025.1)
 - Fixed Issue #1 'Fill Example Data inserts parameter twice', removed parameter from service example.
 
 
 ### Changed
 
 - YAML to include default values for INT and FLOAT values in templates.
-  * See [2021.10 Breaking Changes\Templates](https://www.home-assistant.io/blog/2021/10/06/release-202110/#breaking-changes)
+    - See [2021.10 Breaking Changes\Templates](https://www.home-assistant.io/blog/2021/10/06/release-202110/#breaking-changes)
 - Lid icon to mdi:room-service because it looks more like a BBQ lid.
 - Input_Number's icon to mdi:target.
 - Default heatermeter.set_temperature to 225.
@@ -86,16 +86,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refresh button from Alarms card (not needed with the sync alarms automation).
 
 
-### Links
+<!-- ### Link References -->
 [unreleased]: https://github.com/ledhed-jgh/HAHeaterMeter
-[0.2.0]: https://github.com/ledhed-jgh/HAHeaterMeter/releases/tag/v0.2.0-beta1
-[0.1.0]: https://github.com/ledhed-jgh/HAHeaterMeter/releases/tag/v0.1.0
+[v0.2.0]: https://github.com/ledhed-jgh/HAHeaterMeter/releases/tag/v0.2.0-beta1
+[v0.1.0]: https://github.com/ledhed-jgh/HAHeaterMeter/releases/tag/v0.1.0
 [#9]: https://github.com/ledhed-jgh/HAHeaterMeter/issues?q=is%3Aissue%20state%3Aclosed
 
 
-<!--
+<!-- ### Template
 
-## [Unreleased]
+## [v0.0.0] - 2026-01-01
 
 ### Added
 
