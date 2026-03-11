@@ -20,13 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved logging so changes are reflected in the Device's Activity log.
 - Lid binary_sensor now has an attribute called "seconds_remaining".
 
-- Alarm binary_sensor now has two new attributes:
-    - Now includes a card for setting the Set Point with a slider and 'Set' button.
-    - probe_name: displays the Friendly Name of the probe that is alarming.
-    - These attributes facilitate creating more complex automations.
+* Alarm binary_sensor now has two new attributes:
+    * Now includes a card for setting the Set Point with a slider and 'Set' button.
+    * probe_name: displays the Friendly Name of the probe that is alarming.
+    * These attributes facilitate creating more complex automations.
 
-- New service 'heatermeter.set_alarm_by_index' to facilitate synchronizing single value changes. Note: service 'heatermeter.set_alarms' still exists for backwards compatibility or in scenarios where you want to push all alarm values at once in a script, automation, or Node-Red flow.
-    - Example: you have presets for Pork Butt, Brisket, Chicken, etc...
+* New service 'heatermeter.set_alarm_by_index' to facilitate synchronizing single value changes. Note: service 'heatermeter.set_alarms' still exists for backwards compatibility or in scenarios where you want to push all alarm values at once in a script, automation, or Node-Red flow.
+    * Example: you have presets for Pork Butt, Brisket, Chicken, etc...
 
 - Discovery/ZeroConf, so newly discovered HeaterMeters will show up in the Discovered section of the Integrations tab.
 - Improved device availability. When the HeaterMeter goes offline, all entities enter the Unavailable state. The byproduct of this is less spam in the logs.
