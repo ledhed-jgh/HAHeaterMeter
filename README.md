@@ -10,10 +10,10 @@ HeaterMeter smoker controller integration for HA.
 ## :heavy_check_mark: ToDo:
 - [X] ~~Stop the integration from spamming the logs when the HeaterMeter is offline. (Thanks spoetnik)~~
 - [X] Implement scan_interval.
-- [!] ~~Make TEMP_FAHRENHEIT / TEMP_CELSIUS a user configurable option. or read it from the HeaterMeter config.~~
+- [-] ~~Make TEMP_FAHRENHEIT / TEMP_CELSIUS a user configurable option. or read it from the HeaterMeter config.~~
 - [X] Home Assistant Discovery
 - [X] Individual probe Hi/Lo alarms.
-- [!] ~~Create service to enable/disable 'Ramp' mode.~~ (HeaterMeter API doesn't support this)
+- [-] ~~Create service to enable/disable 'Ramp' mode.~~ (HeaterMeter API doesn't support this)
 - [ ] Silence Alarm: Append a negative to the alarming probe's threshold temp (silencing the alarm) and after the specified period of time, remove the negative value (re-enable the alarm).
 - [ ] StartUp Mode: When starting the smoker, slowly increment the setpoint until Probe0 reaches Target temp (Target = final desired setpoint). Once Target is reached, turn off RampUp. This will prevent the fan from running at 100% for long durations when you initially light the smoker causing more fuel to light than necessary.
 - [ ] Ramp Mode: This will operate exactly like native [Ramp Mode](https://tvwbb.com/threads/introducing-ramp-mode-in-a-snapshot-near-you.61667/) within the HeaterMeter. "as your meat approaches doneness, the pit temperature will ramp down slowly so that when the meat is done, the pit is at the same temperature as the meat and therefore can "hold" indefinitely without overcooking". Unfortunately, there is no way to initiate 'Ramp Mode' from the API, so this will be implemented through the integration.
