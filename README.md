@@ -10,10 +10,37 @@ HeaterMeter smoker controller integration for HA.
 ## :heavy_check_mark: ToDo:
 - [X] ~~Stop the integration from spamming the logs when the HeaterMeter is offline. (Thanks spoetnik)~~
 - [X] Implement scan_interval.
-- [X] Make TEMP_FAHRENHEIT / TEMP_CELSIUS a user configurable option. ~~or read it from the HeaterMeter config.~~
+- [!] ~~Make TEMP_FAHRENHEIT / TEMP_CELSIUS a user configurable option. or read it from the HeaterMeter config.~~
 - [X] Home Assistant Discovery
 - [X] Individual probe Hi/Lo alarms.
 - [!] ~~Create service to enable/disable 'Ramp' mode.~~ (HeaterMeter API doesn't support this)
+- [ ] Silence Alarm: Append a negative to the alarming probe's threshold temp (silencing the alarm) and after the specified period of time, remove the negative value (re-enable the alarm).
+- [ ] StartUp Mode: When starting the smoker, slowly increment the setpoint until Probe0 reaches Target temp (Target = final desired setpoint). Once Target is reached, turn off RampUp. This will prevent the fan from running at 100% for long durations when you initially light the smoker causing more fuel to light than necessary.
+- [ ] Ramp Mode: This will operate exactly like native [Ramp Mode](https://tvwbb.com/threads/introducing-ramp-mode-in-a-snapshot-near-you.61667/) within the HeaterMeter. "as your meat approaches doneness, the pit temperature will ramp down slowly so that when the meat is done, the pit is at the same temperature as the meat and therefore can "hold" indefinitely without overcooking". Unfortunately, there is no way to initiate 'Ramp Mode' from the API, so this will be implemented through the integration.
+- [ ] Multi-Device Support: There are some out there that are fortunate enough to have more than one HeaterMeter, this feature will allow the integrationt to manage multiple HeaterMeter Devices within Home Assistant. The major challenge to this feature is that the API doesn't currently have a way to uniquely identify the HeaterMeter, so this feature will be on-hold until the API can perform this action See: [HeaterMeter #68](https://github.com/CapnBry/HeaterMeter/issues/68).
+- [ ] Expose all HeaterMeter configuration options supported by the API through this integration.
+  - [ ] PID Parameters [proportional, integral, derivative, bias]
+  - [ ] Probe Type
+  - [ ] Probe Naming
+  - [ ] Probe Offsets (Calibration)
+  - [ ] Probe Coefficients
+  - [ ] LCD Backlight %
+  - [ ] Lid Open Autodetect %
+  - [ ] Lid Seconds
+  - [ ] Lid Open Mode: Enable/Disable
+  - [ ] Fan Speed Min
+  - [ ] Fan Speed Max
+  - [ ] Fan Active Floor
+  - [ ] Fan Invert
+  - [ ] Servo High
+  - [ ] Servo Low
+  - [ ] Servo Active Ceiling
+  - [ ] Servo Invert
+  - [ ] Toast Message
+
+
+
+
 <br/>
 
 ## :bookmark_tabs: Table of Contents
